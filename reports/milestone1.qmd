@@ -4,16 +4,60 @@ format: pdf
 editor: visual
 ---
 
-## Quarto
+### Milestone #1 Objective
 
-Quarto enables you to weave together content and executable code into a finished document. To learn more about Quarto see <https://quarto.org>.
+Choose scenario and create git repo; define roles and responsibilities within the group.
 
-## Running Code
+#### **Milestone #1 Details**
 
-When you click the **Render** button a document will be generated that includes both content and the output of embedded code. You can embed code like this:
+Please push to GitHub an html document or a PDF (knitted/rendered from an Rmd or Qmd) with the following information
+
+-   Project option selection
+
+-   A link to your group’s git repository
+
+-   Write out your roles and responsibilities. In a meeting, define these using the "prompts to help define roles and responsibilities within your team" below.
+
+    -   Team's preferred communication method 
+
+    -   Team's preferred meeting times and frequency 
+
+    -   Team's preferred method for tracking progress
+
+    -   Point person for contacting course facilitators with questions
+
+#### **Additionally, please do the following:**
+
+-   Ensure each group member has made at least one commit to the repository
+
+-   Add the teaching team as collaborators to your repository (instructions in the ["How to Turn In Milestone Assignments"](https://bcourses.berkeley.edu/courses/1546358/pages/team-project#S6 "Team Project") section of this page)
+
+### **Prompts to help define roles and responsibilities within your team**
+
+Meeting Planning
+
+-   What is your team's preferred communication method - email, text, bcourse messaging?
+
+-   When will your team be holding meetings? How frequently will you meet? Are there times or days that work well for everyone?
+
+-   Discuss future non-academic commitments that might affect members' availability.
+
+-   Discuss meeting tempo: “checking in” at the beginning of meetings versus “just sticking to business”.
+
+Roles
+
+-   How is your team going to keep track of progress? Who will be taking minutes, creating agendas, and contacting the course facilitators with questions?
+
+-   We encourage you to discuss potential dates and times to meet with a course facilitator during Weeks 3-5. Decide on the best date and time for all.
+
+Conflict Management
+
+-   If a conflict arises, plan to solve the issue as soon as possible. This is best done using synchronous (Zoom, Google Hangouts) communication rather than asynchronous (email).
+
+-   If the group is unable to resolve the conflict, seek advice from the instructional team. 
 
 ```{r}
-1 + 1
+
 ```
 
 You can add options to executable code like this
