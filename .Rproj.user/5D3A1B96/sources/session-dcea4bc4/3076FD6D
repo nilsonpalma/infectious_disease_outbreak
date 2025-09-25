@@ -3,9 +3,9 @@
     "path": "~/infectious_disease_outbreak/reports/milestone1.qmd",
     "project_path": "reports/milestone1.qmd",
     "type": "quarto_markdown",
-    "hash": "0",
+    "hash": "2821501844",
     "contents": "",
-    "dirty": true,
+    "dirty": false,
     "created": 1758767652939.0,
     "source_on_save": false,
     "relative_order": 1,
@@ -21,11 +21,11 @@
         "scrollLine": "0"
     },
     "folds": "",
-    "lastKnownWriteTime": 1758770746,
+    "lastKnownWriteTime": 1758771314,
     "encoding": "UTF-8",
     "collab_server": "",
     "source_window": "",
-    "last_content_update": 1758771208037,
+    "last_content_update": 1758771314272,
     "read_only": false,
     "read_only_alternatives": []
 }
