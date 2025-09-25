@@ -38,33 +38,42 @@ Meeting Planning
 
 -   What is your team's preferred communication method - email, text, bcourse messaging?
 
+**Texting.**
+
 -   When will your team be holding meetings? How frequently will you meet? Are there times or days that work well for everyone?
+
+**Meetings once a week on Tuesdays. We will meet a second time on the weekends if necessary.**
 
 -   Discuss future non-academic commitments that might affect members' availability.
 
+**We both work full-time Mon-Fri.**
+
 -   Discuss meeting tempo: “checking in” at the beginning of meetings versus “just sticking to business”.
+
+**Meeting agenda:**
+
+**Check in on class assignments.**
+
+**Conceptualize our milestones.**
+
+**Get to business.**
 
 Roles
 
 -   How is your team going to keep track of progress? Who will be taking minutes, creating agendas, and contacting the course facilitators with questions?
 
+**For each project milestone we will switch off as team lead. The lead will keep track of the progress for that week, communicate with course facilitators, and submit assignments.**
+
 -   We encourage you to discuss potential dates and times to meet with a course facilitator during Weeks 3-5. Decide on the best date and time for all.
+
+**Our first meeting will be on Monday 9/29 from 1030 - 11.**
 
 Conflict Management
 
 -   If a conflict arises, plan to solve the issue as soon as possible. This is best done using synchronous (Zoom, Google Hangouts) communication rather than asynchronous (email).
 
+**We acknowledge and accept the terms.**
+
 -   If the group is unable to resolve the conflict, seek advice from the instructional team. 
 
-```{r}
-
-```
-
 You can add options to executable code like this
-
-```{r}
-#| echo: false
-2 * 2
-```
-
-The `echo: false` option disables the printing of code (only output is displayed).
