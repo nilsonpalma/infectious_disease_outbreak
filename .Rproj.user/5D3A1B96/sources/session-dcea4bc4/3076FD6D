@@ -3,7 +3,7 @@
     "path": "~/infectious_disease_outbreak/reports/milestone1.qmd",
     "project_path": "reports/milestone1.qmd",
     "type": "quarto_markdown",
-    "hash": "2821501844",
+    "hash": "0",
     "contents": "",
     "dirty": false,
     "created": 1758767652939.0,
@@ -16,7 +16,7 @@
         "Source": "Source",
         "docOutlineVisible": "1",
         "rmdVisualCollapsedChunks": "",
-        "rmdVisualModeLocation": "439:0",
+        "rmdVisualModeLocation": "102:0",
         "cursorPosition": "11,0",
         "scrollLine": "0"
     },
