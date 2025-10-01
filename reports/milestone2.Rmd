@@ -17,10 +17,12 @@ This is a team assignment; each team should complete and turn in an html documen
 
 What is the data source? (1-2 sentences on where the data is coming from, dates included, etc.)
 How does the dataset relate to the group problem statement and question?
-##
 
-Import statements for all datasets:
-##
+All data come from simulated 2023 datasets on an infectious respiratory disease outbreak in California. The sim_novelid_CA.csv file includes morbidity data for all counties except Los Angeles, sim_novelid_LACounty.csv provides morbidity and population data for Los Angeles County, and ca_pop_2023.csv contains county-level population estimates by demographic categories.
+
+
+##Import statements for all datasets:
+We copied the csv files from the PHW251 Project Data github directly to our shared project github.
 
 NOTE: Please use datasets available in the PHW251 Project Data github repoLinks to an external site. (this is important to make sure everyone is using the same datasets)
 Use appropriate import function and package based on the type of file
@@ -28,29 +30,95 @@ Utilize function arguments to control relevant components (i.e. change column ty
 
 ##Document the import process
 ```{r document}
+getwd()
+setwd("../outbreak data")
 
+
+library(readr)
+
+ca_pop <- read.csv("ca_pop_2023.csv")
+sim_novelid_ca <- read.csv("sim_novelid_CA.csv")
+sim_novelid_la <- read.csv("sim_novelid_LACounty.csv")
 
 ```
 
 ##Clean up column names (recommend using snake case, which is lower case text with underscores between words)
 
-```{r cleanup}
-plot(pressure)
+```{r column names}
+
+library(janitor)
+
+?clean_names
+
+
+ca_pop <- clean_names(ca_pop)
+sim_novelid_ca <- clean_names(sim_novelid_ca)
+sim_novelid_la <- janitor::clean_names(sim_novelid_la)
+
+str(ca_pop)
+str(sim_novelid_ca)
+str(sim_novelid_la)
+
 ```
 
 ##Identify data types for 5+ data elements/columns/variables:
-##
+
+
+The columns in ca_pop_2023 are the following data types:
+county (character)
+health_officer_region (character)
+age_cat (character)
+sex (character)
+race7 (character)
+pop (integer)
+
+The columns in sim_novelid_ca are the following data types:
+county (character)
+age_cat (character) 
+sex (character)  
+race_ethnicity (integer)
+dt_diagnosis (character) 
+time_int (integer)  
+$new_infections (integer)
+cumulative_infected (integer)
+new_unrecovered (integer)
+cumulative_unrecovered (integer) 
+new_severe (integer) 
+cumulative_severe (integer)
+
+
+The columns in sim_novelid_la are the following data types:
+dt_dx (character)
+age_category   (character)
+sex   (character)
+race_eth  (character)
+dt_report   (logical)
+dx_new   (integer)
+infected_cumulative   (integer)
+unrecovered_new   (integer)
+unrecovered_cumulative   (integer)
+severe_new  (integer)
+severe_cumulative   (integer)
+
 
 ##Identify 5+ data elements required for your specified scenario. If <5 elements are required to complete the analysis, please choose additional variables of interest in the data set to explore in this milestone.
-##
-
-##Utilize functions or resources in RStudio to determine the types of each data element (i.e. character, numeric, factor)
-##Identify the desired type/format for each variable—will you need to convert any columns to numeric or another type? 
+Utilize functions or resources in RStudio to determine the types of each data element (i.e. character, numeric, factor)
+Identify the desired type/format for each variable—will you need to convert any columns to numeric or another type? 
 ##Provide a basic description of the 5+ data elements:
+
+ca_pop:
+county (character - factor): Names of California counties.
+health_officer_region (character - factor): Regional grouping of counties.
+age_cat (character - ordered factor): Age categories of the population.
+sex (character - factor): Sex categories of the population.
+race7 (character - factor): Race/ethnicity categories.
+pop (integer - numeric): Estimated 2023 population counts for each strata.
+
 
 Numeric: mean, median, range
 Character: unique values/categories
 Or any other descriptives that will be useful to the analysis
+
 ##Describe cleaning that each data source may need:
 
 NOTE: There is no requirement for any data cleaning in this milestone, but there may be cleaning you can do when you import your data! Please list out the anticipated data cleaning needed. 
@@ -59,3 +127,5 @@ Data elements that need to be converted to a different type
 Data elements that need cleaning or re-categorization
 Data elements that may be used for future joins (i.e. state, county)
 
+-date in chr
+-dt_reports in sim_novelid_la is NA
