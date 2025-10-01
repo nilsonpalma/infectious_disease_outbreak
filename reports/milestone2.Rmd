@@ -107,12 +107,21 @@ Identify the desired type/format for each variable—will you need to convert an
 ##Provide a basic description of the 5+ data elements:
 
 ca_pop:
+<<<<<<< HEAD
 county (character change to factor): Names of California counties.
 health_officer_region (character change to factor): Regional grouping of counties.
 age_cat (character change to ordered factor): Age categories of the population.
 sex (character change to factor): Sex categories of the population.
 race7 (character change to factor): Race/ethnicity categories.
 pop (integer): Estimated 2023 population counts for each strata.
+=======
+county (character - factor): Names of California counties.
+health_officer_region (character - factor): Regional grouping of counties.
+age_cat (character - ordered factor): Age categories of the population.
+sex (character - factor): Sex categories of the population.
+race7 (character - factor): Race/ethnicity categories.
+pop (integer - numeric): Estimated 2023 population counts for each strata.
+>>>>>>> 02ff8130b1ef04d1dbef6f12ae48c69581291b79
 
 
 Numeric: mean, median, range
