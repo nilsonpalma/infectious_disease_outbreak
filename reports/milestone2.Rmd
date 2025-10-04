@@ -2,11 +2,15 @@
 title: "milestone2"
 author: "Nilson Palma, Michelle Zhen Huang"
 date: "`r Sys.Date()`"
-output: html_document
+output:
+  html_document: default
+  pdf_document: default
 ---
 
 ```{r setup, include=FALSE}
-knitr::opts_chunk$set(echo = TRUE)
+knitr::opts_chunk$set(echo = TRUE,
+                      warning = FALSE,
+                      message = FALSE)
 ```
 
 ### Milestone 2
@@ -33,8 +37,10 @@ Utilize function arguments to control relevant components (i.e. change column ty
 getwd()
 setwd("../outbreak data")
 
+library(janitor)
+library(tidyverse)
 
-library(readr)
+
 
 ca_pop <- read.csv("ca_pop_2023.csv")
 sim_novelid_ca <- read.csv("sim_novelid_CA.csv")
@@ -79,7 +85,7 @@ sex (character)
 race_ethnicity (integer)
 dt_diagnosis (character) 
 time_int (integer)  
-$new_infections (integer)
+new_infections (integer)
 cumulative_infected (integer)
 new_unrecovered (integer)
 cumulative_unrecovered (integer) 
@@ -89,17 +95,16 @@ cumulative_severe (integer)
 
 The columns in sim_novelid_la are the following data types:
 dt_dx (character)
-age_category   (character)
-sex   (character)
-race_eth  (character)
-dt_report   (logical)
-dx_new   (integer)
-infected_cumulative   (integer)
-unrecovered_new   (integer)
-unrecovered_cumulative   (integer)
-severe_new  (integer)
-severe_cumulative   (integer)
-
+age_category (character)
+sex (character)
+race_eth (character)
+dt_report (logical)
+dx_new (integer)
+infected_cumulative (integer)
+unrecovered_new (integer)
+unrecovered_cumulative (integer)
+severe_new (integer)
+severe_cumulative (integer)
 
 ##Identify 5+ data elements required for your specified scenario. If <5 elements are required to complete the analysis, please choose additional variables of interest in the data set to explore in this milestone.
 Utilize functions or resources in RStudio to determine the types of each data element (i.e. character, numeric, factor)
@@ -107,34 +112,58 @@ Identify the desired type/format for each variable—will you need to convert an
 ##Provide a basic description of the 5+ data elements:
 
 ca_pop:
-<<<<<<< HEAD
-county (character change to factor): Names of California counties.
-health_officer_region (character change to factor): Regional grouping of counties.
-age_cat (character change to ordered factor): Age categories of the population.
-sex (character change to factor): Sex categories of the population.
-race7 (character change to factor): Race/ethnicity categories.
-pop (integer): Estimated 2023 population counts for each strata.
-=======
 county (character - factor): Names of California counties.
 health_officer_region (character - factor): Regional grouping of counties.
 age_cat (character - ordered factor): Age categories of the population.
 sex (character - factor): Sex categories of the population.
 race7 (character - factor): Race/ethnicity categories.
 pop (integer - numeric): Estimated 2023 population counts for each strata.
->>>>>>> 02ff8130b1ef04d1dbef6f12ae48c69581291b79
 
+sim_novelid_ca:
+county - California county of residence of novel ID cases (character change to factor)
+age_cat - age categorization(character change to factor) 
+sex - sex categorization (character change to factor)  
+race_ethnicity - race/ethnicity categorization (integer change to factor)
+dt_diagnosis - date of diagnosis (characterc change to date) 
+new_infections - number of new diagnosed individuals weekly (keep as integer)
+
+sim_novelid_la
+age_category - age categories for LA county (character change to factor)
+sex - sex categorization (character change to factor)
+race_eth - race/ethnicity categorization (character change to factor)
+dt_dx - date of diagnosis (character change to date)
+dx_new - number of new diagnosed individuals weekly (keep as integer)
 
 Numeric: mean, median, range
 Character: unique values/categories
 Or any other descriptives that will be useful to the analysis
 
+```{r data elements}
+
+#CA_POP
+summary(select_if(ca_pop, is.numeric))
+lapply(select_if(ca_pop, is.character), unique)
+
+
+summary(select_if(sim_novelid_ca, is.numeric))
+lapply(select_if(sim_novelid_ca, is.character), unique)
+
+summary(select_if(sim_novelid_la, is.numeric))
+lapply(select_if(sim_novelid_la, is.character), unique)
+
+```
+
+
 ##Describe cleaning that each data source may need:
 
-NOTE: There is no requirement for any data cleaning in this milestone, but there may be cleaning you can do when you import your data! Please list out the anticipated data cleaning needed. 
-Examples:
-Data elements that need to be converted to a different type
-Data elements that need cleaning or re-categorization
-Data elements that may be used for future joins (i.e. state, county)
+Standardize column names for sim_novelid_ca and la (e.g., dt_dx = dt_diagnosis, age_category = age_cat, race_eth = race_ethnicity).
+We would change the observations in race_ethnicity to match race_eth and store them both as factors.
+Format variables (as stated in previous question) and standardize the data types for any future analysis we want to conduct.
+Create a county column in the la data and call it “Los Angeles” to match the ca data (ca_pop specifically for a later merge).
+Format the date variables in both datasets to be the same.
+Then merge the datasets sim_novelid_ca and la.
+Complete standardization between the new total_novelid_ca and ca_pop.
+This would include changing the age categories in sim ca to match pop ca, rename the  race/ethnicity category codes to the previously standardized format, etc.
+We could then merge those two datasets and get our final dataset for analysis.
+Once all the data is merged we could filter for NA and drop if needed.
 
--date in chr
--dt_reports in sim_novelid_la is NA
