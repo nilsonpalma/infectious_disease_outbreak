@@ -11,9 +11,9 @@
 
 <meta name="author" content="Nilson Palma, Michelle Zhen Huang" />
 
-<meta name="date" content="2025-10-04" />
+<meta name="date" content="2025-10-07" />
 
-<title>milestone2</title>
+<title>Milestone 2</title>
 
 <script>// Pandoc 2.9 adds attributes on both header and div. We remove the former (to
 // be compatible with the behavior of Pandoc < 2.8).
@@ -350,19 +350,18 @@ display: none;
 
 
 
-<h1 class="title toc-ignore">milestone2</h1>
+<h1 class="title toc-ignore">Milestone 2</h1>
 <h4 class="author">Nilson Palma, Michelle Zhen Huang</h4>
-<h4 class="date">2025-10-04</h4>
+<h4 class="date">2025-10-07</h4>
 
 </div>
 
 
-<div id="milestone-2" class="section level3">
-<h3>Milestone 2</h3>
 <p>This is a team assignment; each team should complete and turn in an
 html document created from an Rmd or Qmd via Github. Please include code
 and output for the following components:</p>
-<p>##Description of dataset:</p>
+<div id="description-of-dataset" class="section level3">
+<h3>Description of dataset:</h3>
 <p>What is the data source? (1-2 sentences on where the data is coming
 from, dates included, etc.) How does the dataset relate to the group
 problem statement and question?</p>
@@ -372,18 +371,22 @@ includes morbidity data for all counties except Los Angeles,
 sim_novelid_LACounty.csv provides morbidity and population data for Los
 Angeles County, and ca_pop_2023.csv contains county-level population
 estimates by demographic categories.</p>
-<p>##Import statements for all datasets: We copied the csv files from
-the PHW251 Project Data github directly to our shared project
-github.</p>
+</div>
+<div id="import-statements-for-all-datasets" class="section level3">
+<h3>Import statements for all datasets:</h3>
+<p>We copied the csv files from the PHW251 Project Data github directly
+to our shared project github.</p>
 <p>NOTE: Please use datasets available in the PHW251 Project Data github
 repoLinks to an external site. (this is important to make sure everyone
 is using the same datasets) Use appropriate import function and package
 based on the type of file Utilize function arguments to control relevant
 components (i.e. change column types, column names, missing values,
 etc.)</p>
-<p>##Document the import process</p>
+</div>
+<div id="document-the-import-process" class="section level3">
+<h3>Document the import process</h3>
 <pre class="r"><code>getwd()</code></pre>
-<pre><code>## [1] &quot;/Users/nilso/Desktop/R studio/PHW251/group4/infectious_disease_outbreak/reports&quot;</code></pre>
+<pre><code>## [1] &quot;/home/rstudio/infectious_disease_outbreak/reports&quot;</code></pre>
 <pre class="r"><code>setwd(&quot;../outbreak data&quot;)
 
 library(janitor)
@@ -394,8 +397,10 @@ library(tidyverse)
 ca_pop &lt;- read.csv(&quot;ca_pop_2023.csv&quot;)
 sim_novelid_ca &lt;- read.csv(&quot;sim_novelid_CA.csv&quot;)
 sim_novelid_la &lt;- read.csv(&quot;sim_novelid_LACounty.csv&quot;)</code></pre>
-<p>##Clean up column names (recommend using snake case, which is lower
-case text with underscores between words)</p>
+</div>
+<div id="clean-up-column-names-recommend-using-snake-case-which-is-lower-case-text-with-underscores-between-words" class="section level3">
+<h3>Clean up column names (recommend using snake case, which is lower
+case text with underscores between words)</h3>
 <pre class="r"><code>library(janitor)
 
 ?clean_names
@@ -440,7 +445,9 @@ str(ca_pop)</code></pre>
 ##  $ unrecovered_cumulative: int  0 0 0 0 1 2 6 9 10 13 ...
 ##  $ severe_new            : int  0 0 0 0 0 0 0 1 0 0 ...
 ##  $ severe_cumulative     : int  0 0 0 0 0 0 0 1 1 1 ...</code></pre>
-<p>##Identify data types for 5+ data elements/columns/variables:</p>
+</div>
+<div id="identify-data-types-for-5-data-elementscolumnsvariables" class="section level3">
+<h3>Identify data types for 5+ data elements/columns/variables:</h3>
 <p>The columns in ca_pop_2023 are the following data types: county
 (character) health_officer_region (character) age_cat (character) sex
 (character) race7 (character) pop (integer)</p>
@@ -456,20 +463,25 @@ cumulative_severe (integer)</p>
 (character) dt_report (logical) dx_new (integer) infected_cumulative
 (integer) unrecovered_new (integer) unrecovered_cumulative (integer)
 severe_new (integer) severe_cumulative (integer)</p>
-<p>##Identify 5+ data elements required for your specified scenario. If
+</div>
+<div id="identify-5-data-elements-required-for-your-specified-scenario.-if-5-elements-are-required-to-complete-the-analysis-please-choose-additional-variables-of-interest-in-the-data-set-to-explore-in-this-milestone." class="section level3">
+<h3>Identify 5+ data elements required for your specified scenario. If
 &lt;5 elements are required to complete the analysis, please choose
 additional variables of interest in the data set to explore in this
-milestone. Utilize functions or resources in RStudio to determine the
-types of each data element (i.e. character, numeric, factor) Identify
-the desired type/format for each variable—will you need to convert any
-columns to numeric or another type? ##Provide a basic description of the
-5+ data elements:</p>
-<p>ca_pop: county (character - factor): Names of California counties.
-health_officer_region (character - factor): Regional grouping of
-counties. age_cat (character - ordered factor): Age categories of the
-population. sex (character - factor): Sex categories of the population.
-race7 (character - factor): Race/ethnicity categories. pop (integer -
-numeric): Estimated 2023 population counts for each strata.</p>
+milestone.</h3>
+<p>Utilize functions or resources in RStudio to determine the types of
+each data element (i.e. character, numeric, factor) Identify the desired
+type/format for each variable—will you need to convert any columns to
+numeric or another type?</p>
+<div id="provide-a-basic-description-of-the-5-data-elements" class="section level4">
+<h4>Provide a basic description of the 5+ data elements:</h4>
+<p>ca_pop: county (character change to factor): Names of California
+counties. health_officer_region (character change to factor): Regional
+grouping of counties. age_cat (character change to ordered factor): Age
+categories of the population. sex (character change to factor): Sex
+categories of the population. race7 (character change to factor):
+Race/ethnicity categories. pop (keep as integer): Estimated 2023
+population counts for each strata.</p>
 <p>sim_novelid_ca: county - California county of residence of novel ID
 cases (character change to factor) age_cat - age
 categorization(character change to factor) sex - sex categorization
@@ -496,25 +508,19 @@ summary(select_if(ca_pop, is.numeric))</code></pre>
 ##  Max.   :45227.0</code></pre>
 <pre class="r"><code>lapply(select_if(ca_pop, is.character), unique)</code></pre>
 <pre><code>## $county
-##  [1] &quot;Alameda&quot;         &quot;Alpine&quot;          &quot;Amador&quot;          &quot;Butte&quot;          
-##  [5] &quot;Calaveras&quot;       &quot;Colusa&quot;          &quot;Contra Costa&quot;    &quot;Del Norte&quot;      
-##  [9] &quot;El Dorado&quot;       &quot;Fresno&quot;          &quot;Glenn&quot;           &quot;Humboldt&quot;       
-## [13] &quot;Imperial&quot;        &quot;Inyo&quot;            &quot;Kern&quot;            &quot;Kings&quot;          
-## [17] &quot;Lake&quot;            &quot;Lassen&quot;          &quot;Los Angeles&quot;     &quot;Madera&quot;         
-## [21] &quot;Marin&quot;           &quot;Mariposa&quot;        &quot;Mendocino&quot;       &quot;Merced&quot;         
-## [25] &quot;Modoc&quot;           &quot;Mono&quot;            &quot;Monterey&quot;        &quot;Napa&quot;           
-## [29] &quot;Nevada&quot;          &quot;Orange&quot;          &quot;Placer&quot;          &quot;Plumas&quot;         
-## [33] &quot;Riverside&quot;       &quot;Sacramento&quot;      &quot;San Benito&quot;      &quot;San Bernardino&quot; 
-## [37] &quot;San Diego&quot;       &quot;San Francisco&quot;   &quot;San Joaquin&quot;     &quot;San Luis Obispo&quot;
-## [41] &quot;San Mateo&quot;       &quot;Santa Barbara&quot;   &quot;Santa Clara&quot;     &quot;Santa Cruz&quot;     
-## [45] &quot;Shasta&quot;          &quot;Sierra&quot;          &quot;Siskiyou&quot;        &quot;Solano&quot;         
-## [49] &quot;Sonoma&quot;          &quot;Stanislaus&quot;      &quot;Sutter&quot;          &quot;Tehama&quot;         
-## [53] &quot;Trinity&quot;         &quot;Tulare&quot;          &quot;Tuolumne&quot;        &quot;Ventura&quot;        
-## [57] &quot;Yolo&quot;            &quot;Yuba&quot;           
+##  [1] &quot;Alameda&quot;         &quot;Alpine&quot;          &quot;Amador&quot;          &quot;Butte&quot;           &quot;Calaveras&quot;       &quot;Colusa&quot;         
+##  [7] &quot;Contra Costa&quot;    &quot;Del Norte&quot;       &quot;El Dorado&quot;       &quot;Fresno&quot;          &quot;Glenn&quot;           &quot;Humboldt&quot;       
+## [13] &quot;Imperial&quot;        &quot;Inyo&quot;            &quot;Kern&quot;            &quot;Kings&quot;           &quot;Lake&quot;            &quot;Lassen&quot;         
+## [19] &quot;Los Angeles&quot;     &quot;Madera&quot;          &quot;Marin&quot;           &quot;Mariposa&quot;        &quot;Mendocino&quot;       &quot;Merced&quot;         
+## [25] &quot;Modoc&quot;           &quot;Mono&quot;            &quot;Monterey&quot;        &quot;Napa&quot;            &quot;Nevada&quot;          &quot;Orange&quot;         
+## [31] &quot;Placer&quot;          &quot;Plumas&quot;          &quot;Riverside&quot;       &quot;Sacramento&quot;      &quot;San Benito&quot;      &quot;San Bernardino&quot; 
+## [37] &quot;San Diego&quot;       &quot;San Francisco&quot;   &quot;San Joaquin&quot;     &quot;San Luis Obispo&quot; &quot;San Mateo&quot;       &quot;Santa Barbara&quot;  
+## [43] &quot;Santa Clara&quot;     &quot;Santa Cruz&quot;      &quot;Shasta&quot;          &quot;Sierra&quot;          &quot;Siskiyou&quot;        &quot;Solano&quot;         
+## [49] &quot;Sonoma&quot;          &quot;Stanislaus&quot;      &quot;Sutter&quot;          &quot;Tehama&quot;          &quot;Trinity&quot;         &quot;Tulare&quot;         
+## [55] &quot;Tuolumne&quot;        &quot;Ventura&quot;         &quot;Yolo&quot;            &quot;Yuba&quot;           
 ## 
 ## $health_officer_region
-## [1] &quot;Bay Area&quot;                  &quot;Greater Sierra Sacramento&quot;
-## [3] &quot;Central California&quot;        &quot;Rural North&quot;              
+## [1] &quot;Bay Area&quot;                  &quot;Greater Sierra Sacramento&quot; &quot;Central California&quot;        &quot;Rural North&quot;              
 ## [5] &quot;Southern California&quot;       &quot;Los Angeles&quot;              
 ## 
 ## $age_cat
@@ -524,44 +530,39 @@ summary(select_if(ca_pop, is.numeric))</code></pre>
 ## [1] &quot;FEMALE&quot; &quot;MALE&quot;  
 ## 
 ## $race7
-## [1] &quot;WhiteTE NH&quot; &quot;Black NH&quot;   &quot;AIAN NH&quot;    &quot;Asian NH&quot;   &quot;NHPI NH&quot;   
-## [6] &quot;MR NH&quot;      &quot;Hispanic&quot;</code></pre>
+## [1] &quot;WhiteTE NH&quot; &quot;Black NH&quot;   &quot;AIAN NH&quot;    &quot;Asian NH&quot;   &quot;NHPI NH&quot;    &quot;MR NH&quot;      &quot;Hispanic&quot;</code></pre>
 <pre class="r"><code>summary(select_if(sim_novelid_ca, is.numeric))</code></pre>
-<pre><code>##  race_ethnicity    time_int      new_infections    cumulative_infected
-##  Min.   :1      Min.   :202322   Min.   :   0.00   Min.   :    0.0    
-##  1st Qu.:2      1st Qu.:202329   1st Qu.:   0.00   1st Qu.:    1.0    
-##  Median :4      Median :202337   Median :   1.00   Median :   15.0    
-##  Mean   :4      Mean   :202337   Mean   :  37.02   Mean   :  584.7    
-##  3rd Qu.:6      3rd Qu.:202345   3rd Qu.:   8.00   3rd Qu.:  147.0    
-##  Max.   :7      Max.   :202352   Max.   :7142.00   Max.   :80173.0    
-##  new_unrecovered   cumulative_unrecovered   new_severe      cumulative_severe
-##  Min.   :  0.000   Min.   :   0.00        Min.   :  0.000   Min.   :   0.00  
-##  1st Qu.:  0.000   1st Qu.:   0.00        1st Qu.:  0.000   1st Qu.:   0.00  
-##  Median :  0.000   Median :   1.00        Median :  0.000   Median :   0.00  
-##  Mean   :  4.553   Mean   :  66.42        Mean   :  1.029   Mean   :  13.98  
-##  3rd Qu.:  1.000   3rd Qu.:   9.00        3rd Qu.:  0.000   3rd Qu.:   1.00  
-##  Max.   :809.000   Max.   :9398.00        Max.   :198.000   Max.   :2215.00</code></pre>
+<pre><code>##  race_ethnicity    time_int      new_infections    cumulative_infected new_unrecovered   cumulative_unrecovered
+##  Min.   :1      Min.   :202322   Min.   :   0.00   Min.   :    0.0     Min.   :  0.000   Min.   :   0.00       
+##  1st Qu.:2      1st Qu.:202329   1st Qu.:   0.00   1st Qu.:    1.0     1st Qu.:  0.000   1st Qu.:   0.00       
+##  Median :4      Median :202337   Median :   1.00   Median :   15.0     Median :  0.000   Median :   1.00       
+##  Mean   :4      Mean   :202337   Mean   :  37.02   Mean   :  584.7     Mean   :  4.553   Mean   :  66.42       
+##  3rd Qu.:6      3rd Qu.:202345   3rd Qu.:   8.00   3rd Qu.:  147.0     3rd Qu.:  1.000   3rd Qu.:   9.00       
+##  Max.   :7      Max.   :202352   Max.   :7142.00   Max.   :80173.0     Max.   :809.000   Max.   :9398.00       
+##    new_severe      cumulative_severe
+##  Min.   :  0.000   Min.   :   0.00  
+##  1st Qu.:  0.000   1st Qu.:   0.00  
+##  Median :  0.000   Median :   0.00  
+##  Mean   :  1.029   Mean   :  13.98  
+##  3rd Qu.:  0.000   3rd Qu.:   1.00  
+##  Max.   :198.000   Max.   :2215.00</code></pre>
 <pre class="r"><code>lapply(select_if(sim_novelid_ca, is.character), unique)</code></pre>
 <pre><code>## $county
-##  [1] &quot;Alameda County&quot;         &quot;Alpine County&quot;          &quot;Amador County&quot;         
-##  [4] &quot;Butte County&quot;           &quot;Calaveras County&quot;       &quot;Colusa County&quot;         
-##  [7] &quot;Contra Costa County&quot;    &quot;Del Norte County&quot;       &quot;El Dorado County&quot;      
-## [10] &quot;Fresno County&quot;          &quot;Glenn County&quot;           &quot;Humboldt County&quot;       
-## [13] &quot;Imperial County&quot;        &quot;Inyo County&quot;            &quot;Kern County&quot;           
-## [16] &quot;Kings County&quot;           &quot;Lake County&quot;            &quot;Lassen County&quot;         
-## [19] &quot;Madera County&quot;          &quot;Marin County&quot;           &quot;Mariposa County&quot;       
-## [22] &quot;Mendocino County&quot;       &quot;Merced County&quot;          &quot;Modoc County&quot;          
-## [25] &quot;Mono County&quot;            &quot;Monterey County&quot;        &quot;Napa County&quot;           
-## [28] &quot;Nevada County&quot;          &quot;Orange County&quot;          &quot;Placer County&quot;         
-## [31] &quot;Plumas County&quot;          &quot;Riverside County&quot;       &quot;Sacramento County&quot;     
-## [34] &quot;San Benito County&quot;      &quot;San Bernardino County&quot;  &quot;San Diego County&quot;      
-## [37] &quot;San Francisco County&quot;   &quot;San Joaquin County&quot;     &quot;San Luis Obispo County&quot;
-## [40] &quot;San Mateo County&quot;       &quot;Santa Barbara County&quot;   &quot;Santa Clara County&quot;    
-## [43] &quot;Santa Cruz County&quot;      &quot;Shasta County&quot;          &quot;Sierra County&quot;         
-## [46] &quot;Siskiyou County&quot;        &quot;Solano County&quot;          &quot;Sonoma County&quot;         
-## [49] &quot;Stanislaus County&quot;      &quot;Sutter County&quot;          &quot;Tehama County&quot;         
-## [52] &quot;Trinity County&quot;         &quot;Tulare County&quot;          &quot;Tuolumne County&quot;       
-## [55] &quot;Ventura County&quot;         &quot;Yolo County&quot;            &quot;Yuba County&quot;           
+##  [1] &quot;Alameda County&quot;         &quot;Alpine County&quot;          &quot;Amador County&quot;          &quot;Butte County&quot;          
+##  [5] &quot;Calaveras County&quot;       &quot;Colusa County&quot;          &quot;Contra Costa County&quot;    &quot;Del Norte County&quot;      
+##  [9] &quot;El Dorado County&quot;       &quot;Fresno County&quot;          &quot;Glenn County&quot;           &quot;Humboldt County&quot;       
+## [13] &quot;Imperial County&quot;        &quot;Inyo County&quot;            &quot;Kern County&quot;            &quot;Kings County&quot;          
+## [17] &quot;Lake County&quot;            &quot;Lassen County&quot;          &quot;Madera County&quot;          &quot;Marin County&quot;          
+## [21] &quot;Mariposa County&quot;        &quot;Mendocino County&quot;       &quot;Merced County&quot;          &quot;Modoc County&quot;          
+## [25] &quot;Mono County&quot;            &quot;Monterey County&quot;        &quot;Napa County&quot;            &quot;Nevada County&quot;         
+## [29] &quot;Orange County&quot;          &quot;Placer County&quot;          &quot;Plumas County&quot;          &quot;Riverside County&quot;      
+## [33] &quot;Sacramento County&quot;      &quot;San Benito County&quot;      &quot;San Bernardino County&quot;  &quot;to_any_case&quot;
+## [37] &quot;San Francisco County&quot;   &quot;San Joaquin County&quot;     &quot;San Luis Obispo County&quot; &quot;San Mateo County&quot;      
+## [41] &quot;Santa Barbara County&quot;   &quot;Santa Clara County&quot;     &quot;Santa Cruz County&quot;      &quot;Shasta County&quot;         
+## [45] &quot;Sierra County&quot;          &quot;Siskiyou County&quot;        &quot;Solano County&quot;          &quot;Sonoma County&quot;         
+## [49] &quot;Stanislaus County&quot;      &quot;Sutter County&quot;          &quot;Tehama County&quot;          &quot;Trinity County&quot;        
+## [53] &quot;Tulare County&quot;          &quot;Tuolumne County&quot;        &quot;Ventura County&quot;         &quot;Yolo County&quot;           
+## [57] &quot;Yuba County&quot;           
 ## 
 ## $age_cat
 ## [1] &quot;0-17&quot;  &quot;18-49&quot; &quot;50-64&quot; &quot;65+&quot;  
@@ -570,36 +571,24 @@ summary(select_if(ca_pop, is.numeric))</code></pre>
 ## [1] &quot;FEMALE&quot; &quot;MALE&quot;  
 ## 
 ## $dt_diagnosis
-##  [1] &quot;2023-05-29&quot; &quot;2023-06-05&quot; &quot;2023-06-12&quot; &quot;2023-06-19&quot; &quot;2023-06-26&quot;
-##  [6] &quot;2023-07-03&quot; &quot;2023-07-10&quot; &quot;2023-07-17&quot; &quot;2023-07-24&quot; &quot;2023-07-31&quot;
-## [11] &quot;2023-08-07&quot; &quot;2023-08-14&quot; &quot;2023-08-21&quot; &quot;2023-08-28&quot; &quot;2023-09-04&quot;
-## [16] &quot;2023-09-11&quot; &quot;2023-09-18&quot; &quot;2023-09-25&quot; &quot;2023-10-02&quot; &quot;2023-10-09&quot;
-## [21] &quot;2023-10-16&quot; &quot;2023-10-23&quot; &quot;2023-10-30&quot; &quot;2023-11-06&quot; &quot;2023-11-13&quot;
-## [26] &quot;2023-11-20&quot; &quot;2023-11-27&quot; &quot;2023-12-04&quot; &quot;2023-12-11&quot; &quot;2023-12-18&quot;
-## [31] &quot;2023-12-25&quot;</code></pre>
+##  [1] &quot;2023-05-29&quot; &quot;2023-06-05&quot; &quot;2023-06-12&quot; &quot;2023-06-19&quot; &quot;2023-06-26&quot; &quot;2023-07-03&quot; &quot;2023-07-10&quot; &quot;2023-07-17&quot;
+##  [9] &quot;2023-07-24&quot; &quot;2023-07-31&quot; &quot;2023-08-07&quot; &quot;2023-08-14&quot; &quot;2023-08-21&quot; &quot;2023-08-28&quot; &quot;2023-09-04&quot; &quot;2023-09-11&quot;
+## [17] &quot;2023-09-18&quot; &quot;2023-09-25&quot; &quot;2023-10-02&quot; &quot;2023-10-09&quot; &quot;2023-10-16&quot; &quot;2023-10-23&quot; &quot;2023-10-30&quot; &quot;2023-11-06&quot;
+## [25] &quot;2023-11-13&quot; &quot;2023-11-20&quot; &quot;2023-11-27&quot; &quot;2023-12-04&quot; &quot;2023-12-11&quot; &quot;2023-12-18&quot; &quot;2023-12-25&quot;</code></pre>
 <pre class="r"><code>summary(select_if(sim_novelid_la, is.numeric))</code></pre>
-<pre><code>##      dx_new        infected_cumulative unrecovered_new   unrecovered_cumulative
-##  Min.   :    0.0   Min.   :     0.0    Min.   :   0.00   Min.   :    0.0       
-##  1st Qu.:    4.0   1st Qu.:   104.0    1st Qu.:   0.00   1st Qu.:    4.0       
-##  Median :   46.0   Median :   802.5    Median :   3.00   Median :   43.0       
-##  Mean   :  510.5   Mean   :  7993.7    Mean   :  64.18   Mean   :  927.9       
-##  3rd Qu.:  404.2   3rd Qu.:  6437.0    3rd Qu.:  28.00   3rd Qu.:  390.0       
-##  Max.   :12110.0   Max.   :137804.0    Max.   :1436.00   Max.   :16920.0       
-##    severe_new     severe_cumulative
-##  Min.   :  0.00   Min.   :   0.0   
-##  1st Qu.:  0.00   1st Qu.:   0.0   
-##  Median :  0.00   Median :   4.0   
-##  Mean   : 14.46   Mean   : 194.3   
-##  3rd Qu.:  4.00   3rd Qu.:  62.0   
-##  Max.   :352.00   Max.   :4060.0</code></pre>
+<pre><code>##      dx_new        infected_cumulative unrecovered_new   unrecovered_cumulative   severe_new     severe_cumulative
+##  Min.   :    0.0   Min.   :     0.0    Min.   :   0.00   Min.   :    0.0        Min.   :  0.00   Min.   :   0.0   
+##  1st Qu.:    4.0   1st Qu.:   104.0    1st Qu.:   0.00   1st Qu.:    4.0        1st Qu.:  0.00   1st Qu.:   0.0   
+##  Median :   46.0   Median :   802.5    Median :   3.00   Median :   43.0        Median :  0.00   Median :   4.0   
+##  Mean   :  510.5   Mean   :  7993.7    Mean   :  64.18   Mean   :  927.9        Mean   : 14.46   Mean   : 194.3   
+##  3rd Qu.:  404.2   3rd Qu.:  6437.0    3rd Qu.:  28.00   3rd Qu.:  390.0        3rd Qu.:  4.00   3rd Qu.:  62.0   
+##  Max.   :12110.0   Max.   :137804.0    Max.   :1436.00   Max.   :16920.0        Max.   :352.00   Max.   :4060.0</code></pre>
 <pre class="r"><code>lapply(select_if(sim_novelid_la, is.character), unique)</code></pre>
 <pre><code>## $dt_dx
-##  [1] &quot;29MAY2023&quot; &quot;05JUN2023&quot; &quot;12JUN2023&quot; &quot;19JUN2023&quot; &quot;26JUN2023&quot; &quot;03JUL2023&quot;
-##  [7] &quot;10JUL2023&quot; &quot;17JUL2023&quot; &quot;24JUL2023&quot; &quot;31JUL2023&quot; &quot;07AUG2023&quot; &quot;14AUG2023&quot;
-## [13] &quot;21AUG2023&quot; &quot;28AUG2023&quot; &quot;04SEP2023&quot; &quot;11SEP2023&quot; &quot;18SEP2023&quot; &quot;25SEP2023&quot;
-## [19] &quot;02OCT2023&quot; &quot;09OCT2023&quot; &quot;16OCT2023&quot; &quot;23OCT2023&quot; &quot;30OCT2023&quot; &quot;06NOV2023&quot;
-## [25] &quot;13NOV2023&quot; &quot;20NOV2023&quot; &quot;27NOV2023&quot; &quot;04DEC2023&quot; &quot;11DEC2023&quot; &quot;18DEC2023&quot;
-## [31] &quot;25DEC2023&quot;
+##  [1] &quot;29MAY2023&quot; &quot;05JUN2023&quot; &quot;12JUN2023&quot; &quot;19JUN2023&quot; &quot;26JUN2023&quot; &quot;03JUL2023&quot; &quot;10JUL2023&quot; &quot;17JUL2023&quot; &quot;24JUL2023&quot;
+## [10] &quot;31JUL2023&quot; &quot;07AUG2023&quot; &quot;14AUG2023&quot; &quot;21AUG2023&quot; &quot;28AUG2023&quot; &quot;04SEP2023&quot; &quot;11SEP2023&quot; &quot;18SEP2023&quot; &quot;25SEP2023&quot;
+## [19] &quot;02OCT2023&quot; &quot;09OCT2023&quot; &quot;16OCT2023&quot; &quot;23OCT2023&quot; &quot;30OCT2023&quot; &quot;06NOV2023&quot; &quot;13NOV2023&quot; &quot;20NOV2023&quot; &quot;27NOV2023&quot;
+## [28] &quot;04DEC2023&quot; &quot;11DEC2023&quot; &quot;18DEC2023&quot; &quot;25DEC2023&quot;
 ## 
 ## $age_category
 ## [1] &quot;0-17&quot;  &quot;18-49&quot; &quot;50-64&quot; &quot;65+&quot;  
@@ -608,14 +597,14 @@ summary(select_if(ca_pop, is.numeric))</code></pre>
 ## [1] &quot;FEMALE&quot; &quot;MALE&quot;  
 ## 
 ## $race_eth
-## [1] &quot;White, Non-Hispanic&quot;                                   
-## [2] &quot;Black, Non-Hispanic&quot;                                   
-## [3] &quot;American Indian or Alaska Native, Non-Hispanic&quot;        
-## [4] &quot;Asian, Non-Hispanic&quot;                                   
-## [5] &quot;Native Hawaiian or Pacific Islander, Non-Hispanic&quot;     
-## [6] &quot;Multiracial (two or more of above races), Non-Hispanic&quot;
+## [1] &quot;White, Non-Hispanic&quot;                                    &quot;Black, Non-Hispanic&quot;                                   
+## [3] &quot;American Indian or Alaska Native, Non-Hispanic&quot;         &quot;Asian, Non-Hispanic&quot;                                   
+## [5] &quot;Native Hawaiian or Pacific Islander, Non-Hispanic&quot;      &quot;Multiracial (two or more of above races), Non-Hispanic&quot;
 ## [7] &quot;Hispanic (any race)&quot;</code></pre>
-<p>##Describe cleaning that each data source may need:</p>
+</div>
+</div>
+<div id="describe-cleaning-that-each-data-source-may-need" class="section level3">
+<h3>Describe cleaning that each data source may need:</h3>
 <p>Standardize column names for sim_novelid_ca and la (e.g., dt_dx =
 dt_diagnosis, age_category = age_cat, race_eth = race_ethnicity). We
 would change the observations in race_ethnicity to match race_eth and
