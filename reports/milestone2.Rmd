@@ -33,7 +33,7 @@ Utilize function arguments to control relevant components (i.e. change column ty
 ### Document the import process
 ```{r document}
 getwd()
-setwd("../outbreak data")
+setwd("../outbreak_data")
 
 library(janitor)
 library(tidyverse)
