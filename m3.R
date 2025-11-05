@@ -90,3 +90,4 @@ simla3 <- simla2 %>%
   mutate(race_eth = factor(race_eth))
 
 sim_all <- bind_rows(simca3, simla3)
+
