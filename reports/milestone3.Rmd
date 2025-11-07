@@ -1,0 +1,282 @@
+title: "Milestone 2"
+author: "Nilson Palma, Michelle Zhen Huang"
+date: "`r Sys.Date()`"
+output:
+  html_document: default
+  pdf_document: default
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE,
+                      warning = FALSE,
+                      message = FALSE)
+
+```
+
+# Scenario 1: Infectious disease outbreak (simulated) in California
+The sim_novelid_CA.csv file and sim_novelid_LACounty.csv file together represent simulated morbidity for the entire state of California. While it’s certainly possible for data from different sources to adhere to a format standard, one of the challenges of working with secondary data is that it often does not work out that way. Therefore to prepare each dataset (milestone #3) so that they can be combined into one, whole state, dataset you will need to do the following:
+
+Morbidity datasets (from CA and LA County)
+Recode column names, values, or formats that are in discordant (dates, etc)
+Combine morbidity datasets into a single dataset
+Select demographic and geographic strata (s) of interest
+Aggregate the data into a new dataframe to  include only one row per strata of interest
+Population dataset
+Recode values to be consistent with morbidity datasets so they can be joined
+Select demographic or geogrphic strata(s) of interest
+Create a rate metric and summarize to include only one row per strata of interest
+
+
+###For all scenarios, please turn in an html document created from an Rmd or Qmd with the following components:
+Subset rows or columns, as needed
+Create new variables needed for analysis (minimum 2)
+New variables should be created based on existing columns; for example
+Calculating a rate
+Combining character strings
+Aggregation
+Clean variables needed for analysis (minimum 2)
+#Examples:
+Recode invalid values
+Handle missing data
+Recode categories
+Data re-structured as needed (aggregated/summarized and/or pivoted)
+Data dictionary based on clean dataset (minimum 4 data elements), including:
+Variable name
+Data type
+Description
+One or more tables with descriptive statistics for 4 data elements
+Html output that is professionally prepared for presentation
+Only the necessary information is outputted (you should suppress, for example, entire data frame outputs)
+Use of headers and sub headers to create an organized document
+
+
+```{r setup_lib}
+
+library(janitor)
+library(tidyverse)
+library(dplyr)
+library(readr)
+install.packages("aweek")
+library(aweek)
+library(kableExtra)
+
+```
+
+
+
+```{r cleandata}
+
+
+getwd()
+setwd("../outbreak_data")
+
+ca_pop <- read.csv("ca_pop_2023.csv")
+sim_novelid_ca <- read.csv("sim_novelid_CA.csv")
+sim_novelid_la <- read.csv("sim_novelid_LACounty.csv")
+
+sim_novelid_ca <- sim_novelid_ca %>% clean_names()
+sim_novelid_la <- sim_novelid_la %>% clean_names()
+
+# Standardize naming and select for columns
+simca1 <- sim_novelid_ca %>% 
+  select(
+    county,
+    age_cat,
+    sex,
+    race_eth = race_ethnicity,
+    time_int,
+    new_infections,
+    cumulative_infected,
+    new_severe,
+    cumulative_severe
+  )
+simla1 <- sim_novelid_la %>% 
+  mutate(county = "Los Angeles") %>% 
+  select(
+    county,
+    age_cat = age_category,
+    sex,
+    race_eth,
+    dt_diagnosis = dt_dx,
+    new_infections = dx_new,
+    cumulative_infected = infected_cumulative,
+    new_severe = severe_new,
+    cumulative_severe = severe_cumulative
+  )
+
+simca1 <- simca1 %>% drop_na()
+simla1 <- simla1 %>% drop_na()
+
+
+str(simca1)
+str(simla1)
+
+simla1 <- simla1 %>%
+  mutate(dt_diagnosis = dmy(dt_diagnosis))
+
+?week
+
+
+set_week_start(7) 
+# CDC Has a Sunday start date
+## https://www.epirhandbook.com/en/new_pages/dates.html#dates_epi_wks
+
+simca2 <- simca1 %>%
+  mutate(
+    year = substr(time_int, 1, 4),   # Extract 2023
+    week = substr(time_int, 5, 6),    # Extract 22–52
+    cdc_week = aweek::get_date(week = week, year = year)
+  ) %>%
+  select(-year, -week)
+
+simla2 <- simla1 %>% 
+  mutate(
+    cdc_week = get_date(
+      week = isoweek(dt_diagnosis),
+      year = year(dt_diagnosis)
+    )
+  )
+
+# Convert race numeric to named factor
+simca3 <- simca2 %>%
+  mutate(
+    race_eth = recode_factor(race_eth,
+                             `1` = "White, Non-Hispanic",
+                             `2` = "Black, Non-Hispanic",
+                             `3` = "American Indian or Alaska Native, Non-Hispanic",
+                             `4` = "Asian, Non-Hispanic",
+                             `5` = "Native Hawaiian or Pacific Islander, Non-Hispanic",
+                             `6` = "Multiracial (two or more of above races), Non-Hispanic",
+                             `7` = "Hispanic (any race)",
+                             `9` = "Unknown"
+    )
+  ) %>% 
+  select(-time_int)
+
+# Convert race (already character) to factor
+simla3 <- simla2 %>%
+  mutate(race_eth = factor(race_eth))
+
+#Convert dt_diagnosis which is chr to date to merge (NEW)
+str(simca3$dt_diagnosis)
+simca3$dt_diagnosis <- as.Date(simca3$dt_diagnosis)
+
+
+sim_all <- bind_rows(simca3, simla3)
+
+```
+
+
+```{r part2}
+
+str(ca_pop1)
+
+# Standardize naming and select for columns
+ca_pop1 <- ca_pop %>% 
+  select(
+    county,
+    age_cat,
+    sex,
+    race_eth = race7,
+    pop
+  )
+
+unique(ca_pop1$race_eth)
+
+#Standardize race_eth
+ca_pop2<- ca_pop1 %>%
+  mutate(
+    race_eth = recode_factor(race_eth,
+                             "WhiteTE NH" = "White, Non-Hispanic",
+                             "Black NH" = "Black, Non-Hispanic",
+                             "AIAN NH" = "American Indian or Alaska Native, Non-Hispanic",
+                             "Asian NH" = "Asian, Non-Hispanic",
+                             "NHPI NH" = "Native Hawaiian or Pacific Islander, Non-Hispanic",
+                             "MR NH" = "Multiracial (two or more of above races), Non-Hispanic",
+                             "Hispanic" = "Hispanic (any race)"
+    )
+  ) 
+
+
+#reclassify age_cat to 0-17 to match sim_novelid_ca dataset, and aggregate population data
+
+ca_pop3 <- ca_pop2 %>%
+  mutate(age_cat = case_when(
+    age_cat %in% c("0-4", "5-11", "12-17") ~ "0-17",
+    TRUE ~ age_cat
+  )) %>%
+  group_by(county, age_cat, sex, race_eth) %>%
+  summarise(pop = sum(pop, na.rm = TRUE)) %>% 
+  ungroup()
+
+#Remove "county" in county column to have data sets match for County column
+sim_all1 <- sim_all %>%
+  mutate(
+    county = str_to_title(str_remove(county, " County$")),  # remove trailing " County"
+    county = str_trim(county)
+  )
+
+ca_pop4 <- ca_pop3 %>%
+  mutate(
+    county = str_to_title(str_trim(county))
+  )
+
+#combine sim_all with ca_pop data set
+sim_pop <- sim_all1 %>%
+  left_join(ca_pop4, 
+            by = c("county", "age_cat", "sex", "race_eth"))
+
+sim_pop_clean <- sim_pop %>% 
+  select(
+    county,
+    age_cat,
+    sex,
+    race_eth,
+    new_infections,
+    cumulative_infected,
+    new_severe,
+    cumulative_severe,
+    pop
+  )
+
+
+#combining rows (with dt_diagnosis and cdc_week not included):
+sim_combined <- sim_pop_clean %>%
+  group_by(county, age_cat, sex, race_eth) %>%
+  summarise(
+    new_infections = sum(new_infections, na.rm = TRUE),
+    cumulative_infected = sum(cumulative_infected, na.rm = TRUE),
+    new_severe = sum(new_severe, na.rm=TRUE),
+    cumulative_severe = sum(cumulative_severe, na.rm =TRUE),
+    pop = sum(pop, na.rm = TRUE)
+  ) %>% 
+  ungroup()
+
+```
+```{r part 3}
+
+#create new variables for proportions and prevalence of both infected and severe
+sim_combined_var <- sim_combined %>%
+  mutate(
+    incidence_prop = new_infections / pop,
+    prevalence_infected = cumulative_infected / pop,
+    inc_severe_prop = new_severe / pop,
+    prev_severe = cumulative_severe /pop
+  )
+
+
+#summary table
+summary_table <- sim_combined_var %>%
+  summarise(
+    `Total Infections` = sum(new_infections, na.rm = TRUE),
+    `Mean New Infections` = mean(new_infections, na.rm = TRUE),
+    `Total Severe Cases` = sum(new_severe, na.rm = TRUE),
+    `Mean Cumulative Infected` = mean(cumulative_infected, na.rm = TRUE),
+  )
+
+kable(summary_table, 
+      caption = "Summary of Infection Metrics",
+      digits = 2) 
+
+```
+
