@@ -56,9 +56,9 @@ library(janitor)
 library(tidyverse)
 library(dplyr)
 library(readr)
-install.packages("aweek")
 library(aweek)
 library(kableExtra)
+library(here) #install if you don't have
 
 ```
 
@@ -70,9 +70,9 @@ library(kableExtra)
 getwd()
 setwd("../outbreak_data")
 
-ca_pop <- read.csv("ca_pop_2023.csv")
-sim_novelid_ca <- read.csv("sim_novelid_CA.csv")
-sim_novelid_la <- read.csv("sim_novelid_LACounty.csv")
+ca_pop <- read_csv(here("outbreak_data", "ca_pop_2023.csv"))
+sim_novelid_ca <- read_csv(here("outbreak_data", "sim_novelid_CA.csv"))
+sim_novelid_la <- read_csv(here("outbreak_data", "sim_novelid_LACounty.csv"))
 
 sim_novelid_ca <- sim_novelid_ca %>% clean_names()
 sim_novelid_la <- sim_novelid_la %>% clean_names()
@@ -84,12 +84,14 @@ simca1 <- sim_novelid_ca %>%
     age_cat,
     sex,
     race_eth = race_ethnicity,
+    dt_diagnosis,
     time_int,
     new_infections,
     cumulative_infected,
     new_severe,
     cumulative_severe
   )
+
 simla1 <- sim_novelid_la %>% 
   mutate(county = "Los Angeles") %>% 
   select(
@@ -113,9 +115,6 @@ str(simla1)
 
 simla1 <- simla1 %>%
   mutate(dt_diagnosis = dmy(dt_diagnosis))
-
-?week
-
 
 set_week_start(7) 
 # CDC Has a Sunday start date
@@ -157,10 +156,6 @@ simca3 <- simca2 %>%
 simla3 <- simla2 %>%
   mutate(race_eth = factor(race_eth))
 
-#Convert dt_diagnosis which is chr to date to merge (NEW)
-str(simca3$dt_diagnosis)
-simca3$dt_diagnosis <- as.Date(simca3$dt_diagnosis)
-
 
 sim_all <- bind_rows(simca3, simla3)
 
@@ -168,9 +163,7 @@ sim_all <- bind_rows(simca3, simla3)
 
 
 ```{r part2}
-
-str(ca_pop1)
-
+str(ca_pop)
 # Standardize naming and select for columns
 ca_pop1 <- ca_pop %>% 
   select(
@@ -180,7 +173,7 @@ ca_pop1 <- ca_pop %>%
     race_eth = race7,
     pop
   )
-
+str(ca_pop1)
 unique(ca_pop1$race_eth)
 
 #Standardize race_eth
@@ -278,5 +271,101 @@ kable(summary_table,
       caption = "Summary of Infection Metrics",
       digits = 2) 
 
+```
+
+```{r for fun}
+str(sim_pop)
+head(sim_pop)
+unique(sim_pop$cdc_week)
+
+# rate per 100k
+fun <- sim_pop %>%
+  mutate(
+    weekly_incidence_per100k = (new_infections / pop) * 100000,
+    weekly_severe_per100k = (new_severe / pop) * 100000
+  )
+
+head(fun) %>% 
+  select(county, age_cat, cdc_week, new_infections, pop, weekly_incidence_per100k)
+```
+
+
+Looking at whole California over time
+- Aggregate by week
+- All ages, all races, all sexes
+
+Viewing the dataset you can see peak months are August, Sept, Oct
+```{r fun part 1}
+fun1 <- fun %>% 
+  group_by(cdc_week) %>% 
+  summarise(
+    total_cases = sum(new_infections, na.rm = TRUE),
+    total_pop = sum(pop, na.rm = TRUE),
+    total_severe = sum(new_severe, na.rm = TRUE)
+  ) %>% 
+  mutate(
+    ci_per100k = (total_cases / total_pop) * 100000,
+    ci_severe100k = (total_severe / total_pop) *100000
+  )
+## Peak months are August, September, October
+```
+
+Look at age group over time
+- there are differences in rates between age groups 
+- At a quick glance severe CI is greater in 65+ most weeks
+- to make it easier to see what's going on for total CI I'm going to graph it
+```{r fun part 2}
+fun2 <- fun %>% 
+  group_by(cdc_week, age_cat) %>% 
+  summarise(
+    total_cases = sum(new_infections, na.rm = TRUE),
+    total_pop = sum(pop, na.rm = TRUE),
+    total_severe = sum(new_severe, na.rm = TRUE)
+  ) %>%
+  mutate(
+    ci_per100k = (total_cases / total_pop) * 100000,
+    ci_severe100k = (total_severe / total_pop) *100000
+  )
+
+ggplot(fun2,
+       aes(x = cdc_week,
+           y = ci_per100k,
+           color = age_cat)) +
+  geom_line() +
+  labs(
+    x = "Week",
+    y = "Cumulative incidence (per 100,000)"
+  )+
+  theme_minimal()
+
+```
+
+Looking at race/ethnicity over time
+- graph shows there are differences in CI between race/ethnicity
+- American Indian/Alaskan Native are observed to have the greatest peaks in CI
+```{r fun part 3}
+fun3 <- fun %>% 
+  group_by(cdc_week, race_eth) %>% 
+  summarise(
+    total_cases = sum(new_infections, na.rm = TRUE),
+    total_pop = sum(pop, na.rm = TRUE),
+    total_severe = sum(new_severe, na.rm = TRUE)
+  ) %>%
+  mutate(
+    ci_per100k = (total_cases / total_pop) * 100000,
+    ci_severe100k = (total_severe / total_pop) *100000
+  )
+
+ggplot(fun3,
+       aes(x = cdc_week,
+           y = ci_per100k,
+           color = race_eth)) +
+  geom_line() +
+  scale_color_brewer(palette = "Set1") +
+  labs(
+    x = "Week",
+    y = "Cumulative incidence (per 100,000)"
+  )+
+  theme_minimal()
 ```
 
