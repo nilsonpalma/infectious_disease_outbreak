@@ -24,18 +24,14 @@ knitr::opts_chunk$set(echo = TRUE,
 
 The `sim_novelid_CA.csv` file and `sim_novelid_LACounty.csv` file together represent simulated morbidity for the entire state of California. This analysis combines and analyzes these datasets to understand the temporal and demographic patterns of the outbreak.
 
-### Problem Statement 
-(1-2 paragraphs)
+## Problem Statement 
 There is a novel infectious respiratory disease outbreak in California. Data was collected from 2023 and included data on cases and case severity by demographic categories (age category, race, sex) and geographic categories (county) for California counties and population data. As part of the California Department of Public Health surveilling the infectious respiratory disease outbreak, we are interested in examining the course of the outbreak, if it is disproportionately affecting certain demographic or geographic populations and how prevention and treatment resources should be allocated.  
 
 
-### Methods
-Methods, for each data source
-Description of cleaning and creating new variables
-Analytic methodsSource
-Years and/or dates of data
+## Methods
+All data come from (simulated) 2023 datasets on an infectious respiratory disease outbreak in California. The sim_novelid_CA.csv file includes morbidity data for all counties except Los Angeles, sim_novelid_LACounty.csv provides morbidity and population data for Los Angeles County, and ca_pop_2023.csv contains county-level population estimates by demographic categories.
 
-
+For anayltical methods on each data source, please see below:
 ```{r load_libraries, include=FALSE}
 library(janitor)
 library(tidyverse)
@@ -51,7 +47,7 @@ library(lubridate)
 # Data Preparation
 
 ## Load and Clean Morbidity Data
-
+First, we loaded the data.
 ```{r load_data}
 # Load datasets
 ca_pop <- read_csv(here("outbreak_data", "ca_pop_2023.csv"))
@@ -64,7 +60,7 @@ sim_novelid_la <- sim_novelid_la %>% clean_names()
 ```
 
 ## Standardize Column Names and Select Variables
-
+We selected relevant variables to our analysis for each data source.
 ```{r standardize_columns}
 # Standardize CA dataset
 simca1 <- sim_novelid_ca %>% 
@@ -437,3 +433,5 @@ kable(data_dict, col.names = c("Variable", "Data Type", "Description")) %>%
 
 ```
 
+# Discussion
+Based on our results of 
