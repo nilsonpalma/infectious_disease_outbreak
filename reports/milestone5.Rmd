@@ -370,6 +370,12 @@ kable(summary_age,
   kable_styling(bootstrap_options = c("striped", "hover", "condensed"),
                 full_width = FALSE)
 ```
+**Key Findings:**
+
+- Overall, Cumulative Incidence (per 100k), Attack Rate, and Severe Rate generally increased with age, with the exception that the 18–49 age group had higher rates than the 50–64 group.
+- Persons aged 65+ experienced the highest burden across all 3 measures: Cumulative Incidence (per 100k), Attack Rate, and Severe Rate .
+- Persons aged 0-17 had the lowest burden across all 3 measures: Cumulative Incidence (per 100k), Attack Rate, and Severe Rate.
+
 
 ## Summary by Race/Ethnicity
 
@@ -397,6 +403,9 @@ kable(summary_race,
   kable_styling(bootstrap_options = c("striped", "hover", "condensed"),
                 full_width = FALSE)
 ```
+**Key Findings:**
+- American Indian or Alaska Native (Non-Hispanic) populations experienced the highest burden across all 3 measures: Cumulative Incidence (per 100k), Attack Rate, and Severe Rate.
+
 
 # Data Dictionary
 
