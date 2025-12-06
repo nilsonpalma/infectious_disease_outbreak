@@ -29,16 +29,16 @@ There is a novel infectious respiratory disease outbreak in California. Data was
 
 
 ## Methods
-All data come from (simulated) 2023 datasets on an infectious respiratory disease outbreak in California. The sim_novelid_CA.csv file includes morbidity data for all counties except Los Angeles, sim_novelid_LACounty.csv provides morbidity and population data for Los Angeles County, and ca_pop_2023.csv contains county-level population estimates by demographic categories.
+Data for this analysis came from three simulated 2023 datasets. The sim_novelid_CA.csv file contained weekly morbidity data (new infections and severe cases) by county, age group, sex, and race/ethnicity for all California counties except Los Angeles. The sim_novelid_LACounty.csv file provided equivalent morbidity data for Los Angeles County, which operates a separate surveillance system. The ca_pop_2023.csv file provided 2023 population estimates by county and demographic categories, which served as denominators for rate calculations.
+Data preparation involved standardizing variable names and coding schemes across datasets. Race/ethnicity categories were recoded from numeric values to descriptive labels matching California Department of Finance classifications. Age categories in the population data (0-4, 5-11, 12-17) were collapsed to match the broader categories in the morbidity data (0-17). County names were standardized to enable successful joins. Rows with missing values were excluded to ensure complete records for stratified analyses.
+Weekly incidence rates per 100,000 population were calculated by dividing new infections by the population denominator and multiplying by 100,000. This standardization enables fair comparisons across demographic groups of different sizes. Attack rates (cumulative proportion infected) and severity rates (proportion of cases with severe outcomes) were calculated for summary statistics. All measures were stratified by age group and race/ethnicity to identify disparities. CDC epidemiological weeks (Sunday start) were used as the temporal unit for time series analysis.
 
-For anayltical methods on each data source, please see below:
 ```{r load_libraries, include=FALSE}
 library(janitor)
 library(tidyverse)
 library(dplyr)
 library(readr)
 library(aweek)
-install.packages("kableExtra")
 library(kableExtra)
 library(here)
 library(lubridate)
@@ -404,8 +404,9 @@ kable(summary_race,
                 full_width = FALSE)
 ```
 **Key Findings:**
-- American Indian or Alaska Native (Non-Hispanic) populations experienced the highest burden across all 3 measures: Cumulative Incidence (per 100k), Attack Rate, and Severe Rate.
 
+- American Indian or Alaska Native (Non-Hispanic) populations experienced the highest attack rate (14.0%), nearly double that of the lowest group (Multiracial, 7.2%).
+- Asian (Non-Hispanic) populations showed low incidence (8.7% attack rate) but high case severity (3.03%), a pattern potentially explained by an older age distribution in this population.
 
 # Data Dictionary
 
@@ -443,4 +444,7 @@ kable(data_dict, col.names = c("Variable", "Data Type", "Description")) %>%
 ```
 
 # Discussion
-Based on our results of 
+The outbreak peaked in August–September 2023 before declining. The observed disparities have important implications for ongoing preparedness and resource allocation.
+Age was the strongest predictor of disease burden. Adults aged 65 and older experienced the highest attack rates (15.6%) and severity rates (5.0%), indicating this group should be prioritized for both prevention efforts and treatment. The unexpectedly high incidence among adults aged 18–49 compared to those aged 50–64 may reflect occupational exposures and warrants further investigation.
+Racial and ethnic disparities were also evident. American Indian or Alaska Native (Non-Hispanic) populations experienced attack rates nearly double those of the lowest-affected group, highlighting the need for targeted outreach and culturally appropriate prevention strategies. Interestingly, Asian (Non-Hispanic) populations showed low incidence but high case severity, a pattern potentially driven by age distribution within this population. 
+Several limitations should be noted. This analysis used simulated data and may not capture real-world complexities. Socioeconomic factors, which often drive health disparities, were not available in the dataset. Additionally, rows with missing demographic data were excluded, which could introduce bias if missingness was not random. Finally, this analysis did not examine county-level variation, which could reveal geographic clustering of cases, requiring localized response efforts.
