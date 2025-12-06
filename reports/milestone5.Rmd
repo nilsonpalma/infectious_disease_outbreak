@@ -1,0 +1,446 @@
+---
+title: "Milestone 5: Infectious Disease Outbreak in California"
+author: "Nilson Palma, Michelle Zhen Huang"
+date: "`r Sys.Date()`"
+output:
+  html_document: 
+    toc: true
+    toc_float: true
+    theme: cosmo
+  pdf_document: default
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE,
+                      warning = FALSE,
+                      message = FALSE,
+                      fig.width = 10,
+                      fig.height = 6)
+```
+
+# Introduction
+
+## Scenario 1: Infectious Disease Outbreak (Simulated) in California
+
+The `sim_novelid_CA.csv` file and `sim_novelid_LACounty.csv` file together represent simulated morbidity for the entire state of California. This analysis combines and analyzes these datasets to understand the temporal and demographic patterns of the outbreak.
+
+## Problem Statement 
+There is a novel infectious respiratory disease outbreak in California. Data was collected from 2023 and included data on cases and case severity by demographic categories (age category, race, sex) and geographic categories (county) for California counties and population data. As part of the California Department of Public Health surveilling the infectious respiratory disease outbreak, we are interested in examining the course of the outbreak, if it is disproportionately affecting certain demographic or geographic populations and how prevention and treatment resources should be allocated.  
+
+
+## Methods
+All data come from (simulated) 2023 datasets on an infectious respiratory disease outbreak in California. The sim_novelid_CA.csv file includes morbidity data for all counties except Los Angeles, sim_novelid_LACounty.csv provides morbidity and population data for Los Angeles County, and ca_pop_2023.csv contains county-level population estimates by demographic categories.
+
+For anayltical methods on each data source, please see below:
+```{r load_libraries, include=FALSE}
+library(janitor)
+library(tidyverse)
+library(dplyr)
+library(readr)
+library(aweek)
+install.packages("kableExtra")
+library(kableExtra)
+library(here)
+library(lubridate)
+```
+
+# Data Preparation
+
+## Load and Clean Morbidity Data
+First, we loaded the data.
+```{r load_data}
+# Load datasets
+ca_pop <- read_csv(here("outbreak_data", "ca_pop_2023.csv"))
+sim_novelid_ca <- read_csv(here("outbreak_data", "sim_novelid_CA.csv"))
+sim_novelid_la <- read_csv(here("outbreak_data", "sim_novelid_LACounty.csv"))
+
+# Clean column names to snakecase
+sim_novelid_ca <- sim_novelid_ca %>% clean_names()
+sim_novelid_la <- sim_novelid_la %>% clean_names()
+```
+
+## Standardize Column Names and Select Variables
+We selected relevant variables to our analysis for each data source.
+```{r standardize_columns}
+# Standardize CA dataset
+simca1 <- sim_novelid_ca %>% 
+  select(
+    county,
+    age_cat,
+    sex,
+    race_eth = race_ethnicity,
+    dt_diagnosis,
+    time_int,
+    new_infections,
+    cumulative_infected,
+    new_severe,
+    cumulative_severe
+  )
+
+# Standardize LA County dataset
+simla1 <- sim_novelid_la %>% 
+  mutate(county = "Los Angeles") %>% 
+  select(
+    county,
+    age_cat = age_category,
+    sex,
+    race_eth,
+    dt_diagnosis = dt_dx,
+    new_infections = dx_new,
+    cumulative_infected = infected_cumulative,
+    new_severe = severe_new,
+    cumulative_severe = severe_cumulative
+  )
+```
+
+## Handle Missing Data
+
+```{r remove_missing}
+# Remove rows with missing values to ensure clean joins
+simca1 <- simca1 %>% drop_na()
+simla1 <- simla1 %>% drop_na()
+```
+
+## Dates and CDC Week
+
+CDC epidemiological weeks start on Sunday and are the standard for disease surveillance reporting.
+
+```{r create_cdc_weeks}
+# Fix date format for LA County
+simla1 <- simla1 %>%
+  mutate(dt_diagnosis = dmy(dt_diagnosis))
+
+# CDC has a Sunday start date
+set_week_start(7)
+
+# Create CDC week for CA dataset from time_int variable
+simca2 <- simca1 %>%
+  mutate(
+    year = substr(time_int, 1, 4),
+    week = substr(time_int, 5, 6),
+    cdc_week = aweek::get_date(week = week, year = year)
+  ) %>%
+  select(-year, -week)
+
+# Create CDC week for LA County from diagnosis date
+simla2 <- simla1 %>% 
+  mutate(
+    cdc_week = get_date(
+      week = isoweek(dt_diagnosis),
+      year = year(dt_diagnosis)
+    )
+  )
+```
+
+## Recode Race/Ethnicity Categories
+
+```{r recode_race}
+# Convert numeric race codes to descriptive labels for CA data
+simca3 <- simca2 %>%
+  mutate(
+    race_eth = recode_factor(race_eth,
+                             `1` = "White, Non-Hispanic",
+                             `2` = "Black, Non-Hispanic",
+                             `3` = "American Indian or Alaska Native, Non-Hispanic",
+                             `4` = "Asian, Non-Hispanic",
+                             `5` = "Native Hawaiian or Pacific Islander, Non-Hispanic",
+                             `6` = "Multiracial (two or more of above races), Non-Hispanic",
+                             `7` = "Hispanic (any race)",
+                             `9` = "Unknown"
+    )
+  ) %>% 
+  select(-time_int)
+
+# Ensure race is factor type for LA data
+simla3 <- simla2 %>%
+  mutate(race_eth = factor(race_eth))
+```
+
+## Combine Datasets
+
+```{r combine_morbidity}
+# Merge CA and LA County morbidity data
+sim_all <- bind_rows(simca3, simla3)
+```
+
+# Population Data Preparation
+
+## Clean and Standardize Population Data
+
+```{r clean_population}
+# Select and rename columns to match morbidity data
+ca_pop1 <- ca_pop %>% 
+  select(
+    county,
+    age_cat,
+    sex,
+    race_eth = race7,
+    pop
+  )
+
+# Standardize race/ethnicity labels to match morbidity data
+ca_pop2 <- ca_pop1 %>%
+  mutate(
+    race_eth = recode_factor(race_eth,
+                             "WhiteTE NH" = "White, Non-Hispanic",
+                             "Black NH" = "Black, Non-Hispanic",
+                             "AIAN NH" = "American Indian or Alaska Native, Non-Hispanic",
+                             "Asian NH" = "Asian, Non-Hispanic",
+                             "NHPI NH" = "Native Hawaiian or Pacific Islander, Non-Hispanic",
+                             "MR NH" = "Multiracial (two or more of above races), Non-Hispanic",
+                             "Hispanic" = "Hispanic (any race)"
+    )
+  )
+
+# Reclassify age categories to match morbidity data (e.g., 0-17 instead of 0-4, 5-11, 12-17)
+ca_pop3 <- ca_pop2 %>%
+  mutate(age_cat = case_when(
+    age_cat %in% c("0-4", "5-11", "12-17") ~ "0-17",
+    TRUE ~ age_cat
+  )) %>%
+  group_by(county, age_cat, sex, race_eth) %>%
+  summarise(pop = sum(pop, na.rm = TRUE)) %>% 
+  ungroup()
+```
+
+## Standardize County Names
+
+```{r standardize_county_names}
+# Remove "County" suffix from morbidity data to match population data
+sim_all1 <- sim_all %>%
+  mutate(
+    county = str_to_title(str_remove(county, " County$")),
+    county = str_trim(county)
+  )
+
+# Ensure consistent formatting in population data
+ca_pop4 <- ca_pop3 %>%
+  mutate(
+    county = str_to_title(str_trim(county))
+  )
+```
+
+## Join Morbidity and Population Data
+
+```{r join_datasets}
+# Left join to add population data to morbidity data
+sim_pop <- sim_all1 %>%
+  left_join(ca_pop4, 
+            by = c("county", "age_cat", "sex", "race_eth"))
+```
+
+# Time Series Analysis
+
+## Calculate Weekly Rates
+
+```{r calculate_rates}
+# Create dataset with weekly cumulative incidence rates and drop columns
+fun1 <- sim_pop %>%
+  mutate(
+    ci_per100k = (new_infections / pop) * 100000,
+    severe_per100k = (new_severe / pop) * 100000
+  ) %>% 
+  select(-c(dt_diagnosis, cumulative_infected, cumulative_severe))
+```
+
+## Overall California Outbreak Trajectory
+
+```{r overall_trajectory}
+# Aggregate to state level by week
+ca_overall <- fun1 %>%
+  group_by(cdc_week) %>%
+  summarise(
+    total_cases = sum(new_infections, na.rm = TRUE),
+    total_pop = sum(pop, na.rm = TRUE),
+    total_severe = sum(new_severe, na.rm = TRUE)
+  ) %>%
+  mutate(
+    ci_per100k = (total_cases / total_pop) * 100000
+  ) %>%
+  ungroup()
+```
+
+## Stratify by Age Group
+
+```{r stratify_age}
+# Aggregate by age group and week
+ca_by_age <- fun1 %>%
+  group_by(cdc_week, age_cat) %>%
+  summarise(
+    total_cases = sum(new_infections, na.rm = TRUE),
+    total_pop = sum(pop, na.rm = TRUE),
+    total_severe = sum(new_severe, na.rm = TRUE)
+  ) %>%
+  mutate(
+    ci_per100k = (total_cases / total_pop) * 100000
+  ) %>%
+  ungroup()
+```
+
+## Stratify by Race/Ethnicity
+
+```{r stratify_race}
+# Aggregate by race/ethnicity and week
+ca_by_race <- fun1 %>%
+  group_by(cdc_week, race_eth) %>%
+  summarise(
+    total_cases = sum(new_infections, na.rm = TRUE),
+    total_pop = sum(pop, na.rm = TRUE),
+    total_severe = sum(new_severe, na.rm = TRUE)
+  ) %>%
+  mutate(
+    ci_per100k = (total_cases / total_pop) * 100000
+  ) %>%
+  ungroup()
+```
+
+# Results
+
+## Epidemic Curve by Age Group
+
+The outbreak affected all age groups, with clear differences in disease burden by age.
+
+```{r plot_age}
+ggplot(ca_by_age, aes(x = cdc_week, 
+                      y = ci_per100k, 
+                      color = age_cat)) +
+  geom_line() +
+  labs(
+    title = "Infectious Disease Outbreak in California by Age Group 2023",
+    x = "Week",
+    y = "Cumulative Incidence (per 100,000)",
+    color = "Age Group"
+  ) +
+  theme_minimal()
+```
+
+**Key Findings:**
+
+- All age groups peaked simultaneously around August-September 2023.
+- Incidence increases with age, however, cumulative incidence for 18-49 > 50-64.
+- Persons aged 65+ experienced the highest burden (~1,600 per 100,000 at peak).
+- Persons aged 0-17 had the lowest incidence (~350 per 100,000 at peak).
+
+## Epidemic Curve by Race/Ethnicity
+
+```{r plot_race}
+ggplot(ca_by_race, aes(x = cdc_week, 
+                       y = ci_per100k, 
+                       color = race_eth)) +
+  geom_line() +
+  scale_color_brewer(palette = "Set1") +
+  labs(
+    title = "Infectious Disease Outbreak in California by Race/Ethnicity 2023",
+    x = "Weeks",
+    y = "Cumulative Incidence (per 100,000)",
+    color = "Race/Ethnicity"
+  ) +
+  theme_minimal()
+```
+
+**Key Findings:**
+
+- American Indian or Alaska Native (Non-Hispanic) populations experienced the highest peak incidence (~1,250 per 100,000).
+- All racial/ethnic groups followed similar temporal patterns, peaking around the same time.
+
+# Summary Statistics
+
+## Summary by Age Group
+
+```{r summary_age}
+summary_age <- ca_by_age %>%
+  group_by(age_cat) %>%
+  summarise(
+    total_cases = sum(total_cases, na.rm = TRUE),
+    avg_population = mean(total_pop, na.rm = TRUE), # Total population is the same every week
+    peak_weekly_ci = max(ci_per100k, na.rm = TRUE),
+    total_severe = sum(total_severe, na.rm = TRUE)
+  ) %>%
+  mutate(
+    attack_rate_percent = (total_cases / avg_population) * 100,
+    severe_rate_percent = (total_severe / total_cases) * 100
+  )
+
+kable(summary_age, 
+      digits = 2,
+      col.names = c("Age Group", "Total Cases", "Average Population", 
+                    "Peak Weekly CI (per 100k)", "Total Severe Cases",
+                    "Attack Rate (%)", "Severe Rate (%)"),
+      caption = "Outbreak Summary Statistics by Age Group") %>%
+  kable_styling(bootstrap_options = c("striped", "hover", "condensed"),
+                full_width = FALSE)
+```
+**Key Findings:**
+
+- Overall, Cumulative Incidence (per 100k), Attack Rate, and Severe Rate generally increased with age, with the exception that the 18–49 age group had higher rates than the 50–64 group.
+- Persons aged 65+ experienced the highest burden across all 3 measures: Cumulative Incidence (per 100k), Attack Rate, and Severe Rate .
+- Persons aged 0-17 had the lowest burden across all 3 measures: Cumulative Incidence (per 100k), Attack Rate, and Severe Rate.
+
+
+## Summary by Race/Ethnicity
+
+```{r summary_race}
+summary_race <- ca_by_race %>%
+  group_by(race_eth) %>%
+  summarise(
+    total_cases = sum(total_cases, na.rm = TRUE),
+    avg_population = mean(total_pop, na.rm = TRUE),
+    peak_weekly_ci = max(ci_per100k, na.rm = TRUE),
+    total_severe = sum(total_severe, na.rm = TRUE)
+  ) %>%
+  mutate(
+    attack_rate_percent = (total_cases / avg_population) * 100,
+    severe_rate_percent = (total_severe / total_cases) * 100
+  ) %>%
+  arrange(desc(attack_rate_percent))
+
+kable(summary_race, 
+      digits = 2,
+      col.names = c("Race/Ethnicity", "Total Cases", "Average Population", 
+                    "Peak Weekly CI (per 100k)", "Total Severe Cases",
+                    "Attack Rate (%)", "Severe Rate (%)"),
+      caption = "Outbreak Summary Statistics by Race/Ethnicity") %>%
+  kable_styling(bootstrap_options = c("striped", "hover", "condensed"),
+                full_width = FALSE)
+```
+**Key Findings:**
+- American Indian or Alaska Native (Non-Hispanic) populations experienced the highest burden across all 3 measures: Cumulative Incidence (per 100k), Attack Rate, and Severe Rate.
+
+
+# Data Dictionary
+
+## Clean Dataset Variables
+
+The final analytical dataset (`fun1`) contains the following key variables:
+
+```{r data_dictionary, echo=FALSE}
+data_dict <- tibble(
+  Variable = c("county", "age_cat", "sex", "race_eth", 
+               "new_infections", "new_severe", "cdc_week",
+               "pop", "ci_per100k", "severe_per100k"),
+  Data_Type = c("Character", "Character", "Character", "Factor",
+                "Numeric", "Numeric", "Date", 
+                "Numeric", "Numeric", "Numeric"),
+  Description = c(
+    "California counties",
+    "Age category: 0-17, 18-49, 50-64, 65+",
+    "Sex: FEMALE, MALE",
+    "Race/ethnicity category defined by California Department of Finance",
+    "Number of newly diagnosed individuals during the week",
+    "Newly identified individuals with severe disease requiring hospitalization",
+    "Start date of CDC epidemiological week (Sunday)",
+    "CA Dept of Finance population estimates",
+    "Weekly cumulative incidence rate per 100,000 persons",
+    "Weekly severe disease rate per 100,000 persons"
+  )
+)
+
+kable(data_dict, col.names = c("Variable", "Data Type", "Description")) %>%
+  kable_styling(bootstrap_options = "striped")
+
+
+
+```
+
+# Discussion
+Based on our results of 
