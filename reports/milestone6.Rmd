@@ -42,12 +42,14 @@ library(aweek)
 library(kableExtra)
 library(here)
 library(lubridate)
+
+
 ```
 
 # Data Preparation
 
 ## Load and Clean Morbidity Data
-First, we loaded the data.
+First, we loaded the data, and cleaned the names of the columns in the datasets.
 ```{r load_data, include=FALSE}
 # Load datasets
 ca_pop <- read_csv(here("outbreak_data", "ca_pop_2023.csv"))
@@ -288,7 +290,7 @@ ggplot(ca_by_age, aes(x = cdc_week,
   geom_line() +
   labs(
     title = "Infectious Disease Outbreak in California by Age Group 2023",
-    x = "Week",
+    x = "Months",
     y = "Cumulative Incidence (per 100,000)",
     color = "Age Group"
   ) +
@@ -312,7 +314,7 @@ ggplot(ca_by_race, aes(x = cdc_week,
   scale_color_brewer(palette = "Set1") +
   labs(
     title = "Infectious Disease Outbreak in California by Race/Ethnicity 2023",
-    x = "Weeks",
+    x = "Months",
     y = "Cumulative Incidence (per 100,000)",
     color = "Race/Ethnicity"
   ) +
@@ -345,7 +347,7 @@ summary_age <- ca_by_age %>%
 kable(summary_age, 
       digits = 2,
       col.names = c("Age Group", "Total Cases", "Average Population", 
-                    "Peak Weekly CI (per 100k)", "Total Severe Cases",
+                    "Peak Weekly Cumulative Incidence (per 100k)", "Total Severe Cases",
                     "Attack Rate (%)", "Severe Rate (%)"),
       caption = "Outbreak Summary Statistics by Age Group") %>%
   kable_styling(bootstrap_options = c("striped", "hover", "condensed"),
@@ -378,7 +380,7 @@ summary_race <- ca_by_race %>%
 kable(summary_race, 
       digits = 2,
       col.names = c("Race/Ethnicity", "Total Cases", "Average Population", 
-                    "Peak Weekly CI (per 100k)", "Total Severe Cases",
+                    "Peak Weekly Cumulative Incidence (per 100k)", "Total Severe Cases",
                     "Attack Rate (%)", "Severe Rate (%)"),
       caption = "Outbreak Summary Statistics by Race/Ethnicity") %>%
   kable_styling(bootstrap_options = c("striped", "hover", "condensed"),
@@ -388,41 +390,6 @@ kable(summary_race,
 
 - American Indian or Alaska Native (Non-Hispanic) populations experienced the highest attack rate (14.0%), nearly double that of the lowest group (Multiracial, 7.2%).
 - Asian (Non-Hispanic) populations showed low incidence (8.7% attack rate) but high case severity (3.03%), a pattern potentially explained by an older age distribution in this population.
-
-# Data Dictionary
-
-## Clean Dataset Variables
-
-The final analytical dataset (`fun1`) contains the following key variables:
-
-```{r data_dictionary, echo=FALSE}
-data_dict <- tibble(
-  Variable = c("county", "age_cat", "sex", "race_eth", 
-               "new_infections", "new_severe", "cdc_week",
-               "pop", "ci_per100k", "severe_per100k"),
-  Data_Type = c("Character", "Character", "Character", "Factor",
-                "Numeric", "Numeric", "Date", 
-                "Numeric", "Numeric", "Numeric"),
-  Description = c(
-    "California counties",
-    "Age category: 0-17, 18-49, 50-64, 65+",
-    "Sex: FEMALE, MALE",
-    "Race/ethnicity category defined by California Department of Finance",
-    "Number of newly diagnosed individuals during the week",
-    "Newly identified individuals with severe disease requiring hospitalization",
-    "Start date of CDC epidemiological week (Sunday)",
-    "CA Dept of Finance population estimates",
-    "Weekly cumulative incidence rate per 100,000 persons",
-    "Weekly severe disease rate per 100,000 persons"
-  )
-)
-
-kable(data_dict, col.names = c("Variable", "Data Type", "Description")) %>%
-  kable_styling(bootstrap_options = "striped")
-
-
-
-```
 
 # Discussion
 The outbreak peaked in August–September 2023 before declining. The observed disparities have important implications for ongoing preparedness and resource allocation.
